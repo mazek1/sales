@@ -59,6 +59,7 @@ adgang_alle = USERS[email]["access_all"]
 st.sidebar.success(f"Logget ind som: {sælger_navn}")
 admin_user_management()
 
+# Funktion til at indlæse data
 @st.cache_data
 def load_data(uploaded_file):
     df = pd.read_csv(uploaded_file, sep=";", low_memory=False)
@@ -91,24 +92,9 @@ def load_data(uploaded_file):
     
     return df
 
-# Tjek om tidligere data eksisterer
-if os.path.exists(DATA_FILE):
-    df = pd.read_csv(DATA_FILE)
-    if "Invoice Date" in df.columns:
-        df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
-else:
-    df = None
-
-if df is not None:
-    # Filtrér data, så sælger kun ser sine egne kunder (medmindre de har adgang til alle)
-    if "Salesperson" in df.columns and not adgang_alle:
-        df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
-        sælger_navn_clean = sælger_navn.lower().strip()
-        st.write("Unikke sælgernavne i CSV:", df["Salesperson"].unique())
-        if sælger_navn_clean in df["Salesperson"].unique():
-            df = df[df["Salesperson"] == sælger_navn_clean]
-        else:
-            st.error(f"Fejl: '{sælger_navn_clean}' findes ikke i 'Salesperson'-kolonnen. Tjek CSV-filen.")
-    
-    if df.empty:
-        st.warning(f"Ingen data fundet for '{sælger_navn}'. Tjek at 'Salesperson'-kolonnen i CSV-filen matcher nøjagtigt dette navn.")
+# Kun admins kan uploade CSV-filer
+if adgang_alle:
+    uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
+    if uploaded_file:
+        df = load_data(uploaded_file)
+        st.success("CSV-fil er blevet uploadet og indlæst!")
