@@ -92,9 +92,26 @@ def load_data(uploaded_file):
     
     return df
 
+# Indlæs tidligere gemt data, hvis den eksisterer
+if os.path.exists(DATA_FILE):
+    df = pd.read_csv(DATA_FILE)
+    if "Invoice Date" in df.columns:
+        df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
+else:
+    df = None
+
 # Kun admins kan uploade CSV-filer
 if adgang_alle:
     uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
     if uploaded_file:
         df = load_data(uploaded_file)
         st.success("CSV-fil er blevet uploadet og indlæst!")
+
+# Filtrer data til sælgere
+if df is not None and not adgang_alle:
+    df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
+    sælger_navn_clean = sælger_navn.lower().strip()
+    if sælger_navn_clean in df["Salesperson"].unique():
+        df = df[df["Salesperson"] == sælger_navn_clean]
+    else:
+        st.error(f"Fejl: '{sælger_navn}' findes ikke i 'Salesperson'-kolonnen. Tjek CSV-filen.")
