@@ -10,9 +10,9 @@ DATA_FILE = "saved_sales_data.csv"
 
 # Simpel bruger-login (kan udvides med en database eller API)
 USERS = {
-    "sælger1@example.com": {"name": "Sælger 1", "password": "password1", "access_all": False},
+    "anette@soft-rebels.com": {"name": "Anette Pedersen", "password": "password1", "access_all": False},
     "sælger2@example.com": {"name": "Sælger 2", "password": "password2", "access_all": False},
-    "admin@example.com": {"name": "Admin", "password": "adminpass", "access_all": True}
+    "marianne@soft-rebels.com": {"name": "Admin", "password": "adminpass", "access_all": True}
 }
 
 # Login-sektion
