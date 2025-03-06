@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import re
 
 # Sideoverskrift
 st.title("Salgsdata Dashboard")
@@ -15,6 +16,9 @@ def load_data(uploaded_file):
     # Behold kun de relevante kolonner
     columns_to_keep = ["Customer Name", "Season", "Style No", "Style Name", "Color", "Invoice Date", "Physical Size Quantity Delivered", "Sales Price", "Sales Price Original"]
     df = df[columns_to_keep]
+    
+    # Fjern =" og " fra Style No
+    df["Style No"] = df["Style No"].astype(str).apply(lambda x: re.sub(r'^[="\s]+|["\s]+$', '', x))
     
     # Konverter datokolonner
     df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
