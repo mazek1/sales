@@ -98,39 +98,7 @@ if os.path.exists(DATA_FILE):
 else:
     df = None
 
-# Upload CSV-fil
-uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
-
-if uploaded_file:
-    df = load_data(uploaded_file)
-
 if df is not None:
     # Filtrér data, så sælger kun ser sine egne kunder (medmindre de har adgang til alle)
     if "Salesperson" in df.columns and not adgang_alle:
-        df = df[df["Salesperson"] == sælger_navn]
-    
-    # Filtreringssektion
-    st.sidebar.header("Filtrér data")
-
-    kunde_filter = st.sidebar.selectbox("Vælg kunde", ["Alle"] + sorted(df["Customer Name"].dropna().unique().tolist()))
-    season_filter = st.sidebar.selectbox("Vælg season", ["Alle"] + sorted(df["Season"].dropna().unique().tolist()))
-    style_no_filter = st.sidebar.text_input("Søg efter Style No.")
-    style_name_filter = st.sidebar.text_input("Søg efter Style Name")
-    color_filter = st.sidebar.text_input("Søg efter Color")
-
-    # Filtrer data baseret på input
-    filtered_df = df.copy()
-    if kunde_filter != "Alle":
-        filtered_df = filtered_df[filtered_df["Customer Name"] == kunde_filter]
-    if season_filter != "Alle":
-        filtered_df = filtered_df[filtered_df["Season"] == season_filter]
-    if style_no_filter:
-        filtered_df = filtered_df[filtered_df["Style No"].astype(str).str.contains(style_no_filter, case=False, na=False)]
-    if style_name_filter:
-        filtered_df = filtered_df[filtered_df["Style Name"].str.contains(style_name_filter, case=False, na=False)]
-    if color_filter:
-        filtered_df = filtered_df[filtered_df["Color"].str.contains(color_filter, case=False, na=False)]
-
-    # Vis tabel
-    st.write("### Filtrerede salgsdata")
-    st.dataframe(filtered_df)
+        df = df[df["Salesperson"].str.lower() == email.lower()]
