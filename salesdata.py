@@ -8,13 +8,33 @@ st.title("Salgsdata Dashboard")
 
 DATA_FILE = "saved_sales_data.csv"
 
+# Simpel bruger-login (kan udvides med en database eller API)
+USERS = {
+    "sælger1@example.com": {"name": "Sælger 1", "password": "password1", "access_all": False},
+    "sælger2@example.com": {"name": "Sælger 2", "password": "password2", "access_all": False},
+    "admin@example.com": {"name": "Admin", "password": "adminpass", "access_all": True}
+}
+
+# Login-sektion
+st.sidebar.header("Login")
+email = st.sidebar.text_input("Indtast din e-mail for at logge ind")
+password = st.sidebar.text_input("Indtast din adgangskode", type="password")
+
+if email not in USERS or USERS[email]["password"] != password:
+    st.sidebar.warning("Ugyldig e-mail eller adgangskode. Prøv igen.")
+    st.stop()
+
+sælger_navn = USERS[email]["name"]
+adgang_alle = USERS[email]["access_all"]
+st.sidebar.success(f"Logget ind som: {sælger_navn}")
+
 @st.cache_data
 def load_data(uploaded_file):
     # Indlæs data med semikolon som separator
     df = pd.read_csv(uploaded_file, sep=";", low_memory=False)
     
     # Behold kun de relevante kolonner
-    columns_to_keep = ["Customer Name", "Season", "Style No", "Style Name", "Color", "Invoice Date", "Physical Size Quantity Delivered", "Sales Price", "Sales Price Original"]
+    columns_to_keep = ["Customer Name", "Season", "Style No", "Style Name", "Color", "Invoice Date", "Physical Size Quantity Delivered", "Sales Price", "Sales Price Original", "Salesperson"]
     df = df[columns_to_keep]
     
     # Fjern =" og " fra Style No
@@ -42,7 +62,6 @@ def load_data(uploaded_file):
 if os.path.exists(DATA_FILE):
     df = pd.read_csv(DATA_FILE)
     df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
-    st.write("### Indlæst tidligere gemte data")
 else:
     df = None
 
@@ -51,7 +70,6 @@ uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
 
 if uploaded_file:
     df = load_data(uploaded_file)
-    st.write("### Data fra uploadet fil er gemt og indlæst")
 
 # Tilføj knap til at rydde gemt data
 if st.button("Ryd gemt data"):
@@ -61,10 +79,14 @@ if st.button("Ryd gemt data"):
         df = None
 
 if df is not None:
+    # Filtrér data, så sælger kun ser sine egne kunder (medmindre de har adgang til alle)
+    if not adgang_alle:
+        df = df[df["Salesperson"] == sælger_navn]
+    
     # Filtreringssektion
     st.sidebar.header("Filtrér data")
 
-    kunde_filter = st.sidebar.text_input("Søg efter kunde")
+    kunde_filter = st.sidebar.selectbox("Vælg kunde", ["Alle"] + sorted(df["Customer Name"].dropna().unique().tolist()))
     season_filter = st.sidebar.selectbox("Vælg season", ["Alle"] + sorted(df["Season"].dropna().unique().tolist()))
     style_no_filter = st.sidebar.text_input("Søg efter Style No.")
     style_name_filter = st.sidebar.text_input("Søg efter Style Name")
@@ -72,8 +94,8 @@ if df is not None:
 
     # Filtrer data baseret på input
     filtered_df = df.copy()
-    if kunde_filter:
-        filtered_df = filtered_df[filtered_df["Customer Name"].str.contains(kunde_filter, case=False, na=False)]
+    if kunde_filter != "Alle":
+        filtered_df = filtered_df[filtered_df["Customer Name"] == kunde_filter]
     if season_filter != "Alle":
         filtered_df = filtered_df[filtered_df["Season"] == season_filter]
     if style_no_filter:
