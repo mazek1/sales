@@ -12,7 +12,7 @@ DATA_FILE = "saved_sales_data.csv"
 USERS = {
     "anette@soft-rebels.com": {"name": "Anette", "password": "password1", "access_all": False},
     "sælger2@example.com": {"name": "Sælger 2", "password": "password2", "access_all": False},
-    "marianne@soft-rebels.com": {"name": "Marianne", "password": "adminpass", "access_all": True}
+    "marianne@soft-rebels.com": {"name": "Marianne", "password": "adminpass", "access_all": True},
     "mads@soft-rebels.com": {"name": "Mads", "password": "adminpass", "access_all": True}
 }
 
