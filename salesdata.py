@@ -112,6 +112,7 @@ if adgang_alle:
 if df is not None and not adgang_alle:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
     sælger_navn_clean = sælger_navn.lower().strip()
+    st.write("Unikke sælgernavne i CSV:", df["Salesperson"].unique())
     if sælger_navn_clean in df["Salesperson"].unique():
         df = df[df["Salesperson"] == sælger_navn_clean]
     else:
