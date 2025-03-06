@@ -11,9 +11,12 @@ if uploaded_file:
     # Indlæs data med semikolon som separator
     df = pd.read_csv(uploaded_file, sep=";", low_memory=False)
     
+    # Behold kun de relevante kolonner
+    columns_to_keep = ["Customer Name", "Season", "Style No", "Style Name", "Color", "Invoice Date", "Physical Size Quantity Delivered", "Sales Price"]
+    df = df[columns_to_keep]
+    
     # Konverter datokolonner
-    if "Invoice Date" in df.columns:
-        df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
+    df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
     
     # Filtreringssektion
     st.sidebar.header("Filtrér data")
