@@ -81,4 +81,4 @@ if df is not None:
 
     # Generer link til sælgerne (dummy placeholder)
     st.write("### Del dette dashboard med dine sælgere:")
-    st.code("https://your-streamlit-app-url")
+    st.code("https://salesdatapy-bgsd78qzbbpzn38ja4d73w.streamlit.app/")
