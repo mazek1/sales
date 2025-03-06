@@ -101,4 +101,6 @@ else:
 if df is not None:
     # Filtrér data, så sælger kun ser sine egne kunder (medmindre de har adgang til alle)
     if "Salesperson" in df.columns and not adgang_alle:
-        df = df[df["Salesperson"].str.lower() == email.lower()]
+        df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
+df = df[df["Salesperson"] == email.lower()]
+
