@@ -13,11 +13,16 @@ def load_data(uploaded_file):
     df = pd.read_csv(uploaded_file, sep=";", low_memory=False)
     
     # Behold kun de relevante kolonner
-    columns_to_keep = ["Customer Name", "Season", "Style No", "Style Name", "Color", "Invoice Date", "Physical Size Quantity Delivered", "Sales Price"]
+    columns_to_keep = ["Customer Name", "Season", "Style No", "Style Name", "Color", "Invoice Date", "Physical Size Quantity Delivered", "Sales Price", "Sales Price Original"]
     df = df[columns_to_keep]
     
     # Konverter datokolonner
     df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
+    
+    # Beregn rabat
+    df["Discount Applied"] = df["Sales Price Original"] - df["Sales Price"]
+    df["Discount %"] = (df["Discount Applied"] / df["Sales Price Original"]) * 100
+    df["Discount %"] = df["Discount %"].round(2)
     
     # Gem data til fil
     df.to_csv(DATA_FILE, index=False)
@@ -79,6 +84,6 @@ if df is not None:
         st.write("### Salgstrend over tid")
         st.line_chart(sales_trend)
 
-    # Generer link til sælgerne (dummy placeholder)
+    # Generer link til sælgerne
     st.write("### Del dette dashboard med dine sælgere:")
     st.code("https://salesdatapy-bgsd78qzbbpzn38ja4d73w.streamlit.app/")
