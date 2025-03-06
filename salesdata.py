@@ -5,7 +5,7 @@ import re
 import bcrypt
 
 # Sideoverskrift
-st.title("Salgsdata Dashboard")
+st.title("Sales Data Dashboard")
 
 DATA_FILE = "saved_sales_data.csv"
 
