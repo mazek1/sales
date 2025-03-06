@@ -19,10 +19,15 @@ def load_data(uploaded_file):
     # Konverter datokolonner
     df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
     
+    # Konverter priser til numeriske værdier og håndter fejl
+    df["Sales Price"] = pd.to_numeric(df["Sales Price"], errors='coerce')
+    df["Sales Price Original"] = pd.to_numeric(df["Sales Price Original"], errors='coerce')
+    
     # Beregn rabat
     df["Discount Applied"] = df["Sales Price Original"] - df["Sales Price"]
+    df["Discount Applied"] = df["Discount Applied"].fillna(0)
     df["Discount %"] = (df["Discount Applied"] / df["Sales Price Original"]) * 100
-    df["Discount %"] = df["Discount %"].round(2)
+    df["Discount %"] = df["Discount %"].fillna(0).round(2)
     
     # Gem data til fil
     df.to_csv(DATA_FILE, index=False)
