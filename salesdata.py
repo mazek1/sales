@@ -2,18 +2,19 @@ import streamlit as st
 import pandas as pd
 import os
 import re
+import bcrypt
 
 # Sideoverskrift
 st.title("Salgsdata Dashboard")
 
 DATA_FILE = "saved_sales_data.csv"
 
-# Simpel bruger-login (kan udvides med en database eller API)
+# Simpel bruger-login med hashed adgangskoder
 USERS = {
-    "anette@soft-rebels.com": {"name": "Anette", "password": "password1", "access_all": False},
-    "sælger2@example.com": {"name": "Sælger 2", "password": "password2", "access_all": False},
-    "marianne@soft-rebels.com": {"name": "Marianne", "password": "adminpass", "access_all": True},
-    "mads@soft-rebels.com": {"name": "Mads", "password": "adminpass", "access_all": True}
+    "anette@soft-rebels.com": {"name": "Anette", "password": bcrypt.hashpw("password1".encode(), bcrypt.gensalt()), "access_all": False},
+    "sælger2@example.com": {"name": "Sælger 2", "password": bcrypt.hashpw("password2".encode(), bcrypt.gensalt()), "access_all": False},
+    "marianne@soft-rebels.com": {"name": "Marianne", "password": bcrypt.hashpw("adminpass".encode(), bcrypt.gensalt()), "access_all": True},
+    "mads@soft-rebels.com": {"name": "Mads", "password": bcrypt.hashpw("adminpass".encode(), bcrypt.gensalt()), "access_all": True}
 }
 
 # UI til brugerhåndtering (kun for admin)
@@ -29,7 +30,7 @@ def admin_user_management():
             access_all = st.sidebar.checkbox("Giv adgang til alle kunder")
             
             if st.sidebar.button("Opret bruger"):
-                USERS[new_email] = {"name": new_name, "password": new_password, "access_all": access_all}
+                USERS[new_email] = {"name": new_name, "password": bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()), "access_all": access_all}
                 st.sidebar.success(f"Bruger {new_email} oprettet!")
         
         elif action == "Slet bruger":
@@ -42,14 +43,14 @@ def admin_user_management():
                     st.sidebar.error("Admin-brugeren kan ikke slettes.")
         
         elif action == "Se brugere":
-            st.sidebar.write(pd.DataFrame.from_dict(USERS, orient="index"))
+            st.sidebar.write(pd.DataFrame.from_dict({k: {"name": v["name"], "access_all": v["access_all"]} for k, v in USERS.items()}, orient="index"))
 
 # Login-sektion
 st.sidebar.header("Login")
 email = st.sidebar.text_input("Indtast din e-mail for at logge ind")
 password = st.sidebar.text_input("Indtast din adgangskode", type="password")
 
-if email not in USERS or USERS[email]["password"] != password:
+if email not in USERS or not bcrypt.checkpw(password.encode(), USERS[email]["password"]):
     st.sidebar.warning("Ugyldig e-mail eller adgangskode. Prøv igen.")
     st.stop()
 
