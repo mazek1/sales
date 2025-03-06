@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
+import os
 
 # Sideoverskrift
 st.title("Salgsdata Dashboard")
 
-# Upload CSV-fil
-uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
+DATA_FILE = "saved_sales_data.csv"
 
-if uploaded_file:
+@st.cache_data
+def load_data(uploaded_file):
     # Indlæs data med semikolon som separator
     df = pd.read_csv(uploaded_file, sep=";", low_memory=False)
     
@@ -18,6 +19,34 @@ if uploaded_file:
     # Konverter datokolonner
     df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
     
+    # Gem data til fil
+    df.to_csv(DATA_FILE, index=False)
+    
+    return df
+
+# Tjek om tidligere data eksisterer
+if os.path.exists(DATA_FILE):
+    df = pd.read_csv(DATA_FILE)
+    df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
+    st.write("### Indlæst tidligere gemte data")
+else:
+    df = None
+
+# Upload CSV-fil
+uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
+
+if uploaded_file:
+    df = load_data(uploaded_file)
+    st.write("### Data fra uploadet fil er gemt og indlæst")
+
+# Tilføj knap til at rydde gemt data
+if st.button("Ryd gemt data"):
+    if os.path.exists(DATA_FILE):
+        os.remove(DATA_FILE)
+        st.write("### Gemt data er blevet slettet. Upload en ny fil for at fortsætte.")
+        df = None
+
+if df is not None:
     # Filtreringssektion
     st.sidebar.header("Filtrér data")
 
