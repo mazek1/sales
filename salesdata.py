@@ -11,7 +11,7 @@ DATA_FILE = "saved_sales_data.csv"
 
 # Simpel bruger-login med hashed adgangskoder
 USERS = {
-    "anette@soft-rebels.com": {"name": "Anette", "password": bcrypt.hashpw("password1".encode(), bcrypt.gensalt()), "access_all": False},
+    "anette@soft-rebels.com": {"name": "Anette Elsebet Pedersen", "password": bcrypt.hashpw("password1".encode(), bcrypt.gensalt()), "access_all": False},
     "sælger2@example.com": {"name": "Sælger 2", "password": bcrypt.hashpw("password2".encode(), bcrypt.gensalt()), "access_all": False},
     "marianne@soft-rebels.com": {"name": "Marianne", "password": bcrypt.hashpw("adminpass".encode(), bcrypt.gensalt()), "access_all": True},
     "mads@soft-rebels.com": {"name": "Mads", "password": bcrypt.hashpw("adminpass".encode(), bcrypt.gensalt()), "access_all": True}
