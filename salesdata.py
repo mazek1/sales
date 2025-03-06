@@ -39,7 +39,7 @@ def admin_user_management():
                 if user_to_delete != "admin@example.com":
                     del USERS[user_to_delete]
                     st.sidebar.success(f"Bruger {user_to_delete} er slettet.")
-                    else:
+                else:
                     st.sidebar.error("Admin-brugeren kan ikke slettes.")
         
         elif action == "Se brugere":
@@ -105,10 +105,10 @@ if df is not None:
         df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
         sælger_navn_clean = sælger_navn.lower().strip()
         st.write("Unikke sælgernavne i CSV:", df["Salesperson"].unique())
-    if sælger_navn_clean in df["Salesperson"].unique():
-        df = df[df["Salesperson"] == sælger_navn_clean]
-    else:
-        st.error(f"Fejl: '{sælger_navn_clean}' findes ikke i 'Salesperson'-kolonnen. Tjek CSV-filen.")
+        if sælger_navn_clean in df["Salesperson"].unique():
+            df = df[df["Salesperson"] == sælger_navn_clean]
+        else:
+            st.error(f"Fejl: '{sælger_navn_clean}' findes ikke i 'Salesperson'-kolonnen. Tjek CSV-filen.")
     
     if df.empty:
         st.warning(f"Ingen data fundet for '{sælger_navn}'. Tjek at 'Salesperson'-kolonnen i CSV-filen matcher nøjagtigt dette navn.")
