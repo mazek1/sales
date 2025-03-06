@@ -111,6 +111,7 @@ if adgang_alle:
 # Filtrer data til sælgere
 if df is not None and not adgang_alle:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
+df = df.dropna(subset=["Salesperson"])
     sælger_navn_clean = sælger_navn.lower().strip()
     
     if sælger_navn_clean in df["Salesperson"].unique():
