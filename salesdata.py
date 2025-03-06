@@ -103,4 +103,7 @@ if df is not None:
     # Filtrér data, så sælger kun ser sine egne kunder (medmindre de har adgang til alle)
     if "Salesperson" in df.columns and not adgang_alle:
         df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
-        df = df[df["Salesperson"] == email.lower()]
+        df = df[df["Salesperson"] == sælger_navn.lower()]
+    
+    if df.empty:
+        st.warning("Ingen data fundet for denne sælger. Tjek at 'Salesperson'-kolonnen matcher brugernavne korrekt i CSV-filen.")
