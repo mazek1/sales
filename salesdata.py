@@ -20,7 +20,7 @@ USERS = {
 # UI til brugerhåndtering (kun for admin)
 def admin_user_management():
     st.sidebar.subheader("Brugerhåndtering")
-    if email == "admin@example.com":
+    if email in USERS and USERS[email]["access_all"]:
         action = st.sidebar.selectbox("Vælg handling", ["Tilføj bruger", "Slet bruger", "Se brugere"])
         
         if action == "Tilføj bruger":
