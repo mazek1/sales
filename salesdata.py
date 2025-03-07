@@ -89,8 +89,9 @@ def load_data(uploaded_file):
         df["Discount %"] = df["Discount %"].fillna(0).round(2)
     
     # Gem data til fil
-    if adgang_alle:
-    df.to_csv(DATA_FILE, index=False)
+    if adgang_alle and df is not None:
+        if df is not None:
+            df.to_csv(DATA_FILE, index=False)
     
     return df
 
@@ -119,6 +120,7 @@ if df is not None and not adgang_alle:
     
     
     if sælger_navn_clean in df["Salesperson"].unique():
+        st.write(f"Data fundet for {sælger_navn_clean}")
         df = df[df["Salesperson"] == sælger_navn_clean]
     else:
         st.error(f"Fejl: '{sælger_navn}' findes ikke i 'Salesperson'-kolonnen. Tjek CSV-filen.")
