@@ -90,18 +90,10 @@ if df is not None and not adgang_alle:
         st.write("Data efter filtrering:")
         st.write(df.head())
         
-        # Opret et simpelt søjlediagram over solgte varer
-        fig, ax = plt.subplots()
-        df_grouped = df.groupby("Style Name")["Physical Size Quantity Delivered"].sum()
-        df_grouped.plot(kind="bar", ax=ax)
-        ax.set_title("Antal solgte enheder pr. Style Name")
-        ax.set_ylabel("Antal solgte enheder")
-        ax.set_xlabel("Style Name")
-        st.pyplot(fig)
-        
+                
         # Opret en oversigt over total salg
         total_sales = df["Sales Price"].sum()
-        st.metric(label="Total Sales", value=f"{total_sales:,.2f} DKK")
+        st.metric(label="Total Sales", value=f"{total_sales:.2f} DKK")
         
     else:
         st.warning(f"Ingen salg fundet for '{sælger_navn}'. Enten er der ingen salg registreret, eller navnet matcher ikke præcist i CSV.")
