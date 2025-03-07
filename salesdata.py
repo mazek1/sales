@@ -98,7 +98,7 @@ def load_data(uploaded_file):
 # Indlæs tidligere gemt data, hvis den eksisterer
 if 'df' in locals() and df is not None:
     st.write(f"Antal rækker i data: {len(df)}")
-if os.path.exists(DATA_FILE):
+if os.path.exists(DATA_FILE) and not adgang_alle:
     df = pd.read_csv(DATA_FILE)
     if "Invoice Date" in df.columns:
         df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
@@ -116,6 +116,7 @@ if adgang_alle:
 # Filtrer data til sælgere
 if df is not None and not adgang_alle:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
+df["Salesperson"] = df["Salesperson"].replace({'\r': '', '\n': ''}, regex=True)
     df = df.dropna(subset=["Salesperson"])
     sælger_navn_clean = sælger_navn.lower().strip()
     
