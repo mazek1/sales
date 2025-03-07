@@ -109,8 +109,8 @@ if adgang_alle:
     uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
     if uploaded_file:
         df = load_data(uploaded_file)
-df.to_csv(DATA_FILE, index=False)
-        st.success("CSV-fil er blevet uploadet og indlæst!")
+    df.to_csv(DATA_FILE, index=False)
+    st.success("CSV-fil er blevet uploadet og indlæst!")
 
 # Filtrer data til sælgere
 if df is not None and not adgang_alle:
