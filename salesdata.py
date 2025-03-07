@@ -87,6 +87,8 @@ if df is not None and not adgang_alle:
     if sælger_navn_clean in df["Salesperson"].unique():
         st.write(f"Data fundet for {sælger_navn_clean}")
         df = df[df["Salesperson"] == sælger_navn_clean]
+        st.write("Data efter filtrering:")
+        st.write(df.head())
         
         # Opret et simpelt søjlediagram over solgte varer
         fig, ax = plt.subplots()
@@ -102,4 +104,4 @@ if df is not None and not adgang_alle:
         st.metric(label="Total Sales", value=f"{total_sales:,.2f} DKK")
         
     else:
-        st.error(f"Fejl: '{sælger_navn}' findes ikke i 'Salesperson'-kolonnen. Tjek CSV-filen.")
+        st.warning(f"Ingen salg fundet for '{sælger_navn}'. Enten er der ingen salg registreret, eller navnet matcher ikke præcist i CSV.")
