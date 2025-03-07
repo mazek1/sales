@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import re
 import bcrypt
+import matplotlib.pyplot as plt
 
 # Sideoverskrift
 st.title("Sales Data Dashboard")
@@ -60,44 +61,7 @@ adgang_alle = USERS[email]["access_all"]
 st.sidebar.success(f"Logget ind som: {sælger_navn}")
 admin_user_management()
 
-# Funktion til at indlæse data
-@st.cache_data
-def load_data(uploaded_file):
-    df = pd.read_csv(uploaded_file, sep=";", low_memory=False)
-    
-    # Behold kun de relevante kolonner, hvis de findes
-    relevant_columns = ["Customer Name", "Season", "Style No", "Style Name", "Color", "Invoice Date", "Physical Size Quantity Delivered", "Sales Price", "Sales Price Original", "Salesperson"]
-    df = df[[col for col in relevant_columns if col in df.columns]]
-    
-    # Fjern =" og " fra Style No
-    df["Style No"] = df["Style No"].astype(str).apply(lambda x: re.sub(r'^[="\s]+|["\s]+$', '', x))
-    
-    # Konverter datokolonner
-    if "Invoice Date" in df.columns:
-        df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
-    
-    # Konverter priser til numeriske værdier og håndter fejl
-    for col in ["Sales Price", "Sales Price Original"]:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce')
-    
-    # Beregn rabat, hvis kolonnerne eksisterer
-    if "Sales Price" in df.columns and "Sales Price Original" in df.columns:
-        df["Discount Applied"] = df["Sales Price Original"] - df["Sales Price"]
-        df["Discount Applied"] = df["Discount Applied"].fillna(0)
-        df["Discount %"] = (df["Discount Applied"] / df["Sales Price Original"]) * 100
-        df["Discount %"] = df["Discount %"].fillna(0).round(2)
-    
-    # Gem data til fil
-    if adgang_alle and df is not None:
-        if 'df' in locals() and df is not None:
-            df.to_csv(DATA_FILE, index=False)
-    
-    return df
-
 # Indlæs tidligere gemt data, hvis den eksisterer
-if 'df' in locals() and df is not None:
-    st.write(f"Antal rækker i data: {len(df)}")
 if os.path.exists(DATA_FILE) and not adgang_alle:
     df = pd.read_csv(DATA_FILE)
     if "Invoice Date" in df.columns:
@@ -109,20 +73,33 @@ else:
 if adgang_alle:
     uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
     if uploaded_file:
-        df = load_data(uploaded_file)
-    df.to_csv(DATA_FILE, index=False)
-    st.success("CSV-fil er blevet uploadet og indlæst!")
+        df = pd.read_csv(uploaded_file, sep=";", low_memory=False)
+        df.to_csv(DATA_FILE, index=False)
+        st.success("CSV-fil er blevet uploadet og indlæst!")
 
-# Filtrer data til sælgere
+# Filtrer data for sælgeren
 if df is not None and not adgang_alle:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
-    df["Salesperson"] = df["Salesperson"].replace({'\r': '', '\n': ''}, regex=True)
+    df["Salesperson"] = df["Salesperson"].replace({'\\r': '', '\\n': ''}, regex=True)
     df = df.dropna(subset=["Salesperson"])
     sælger_navn_clean = sælger_navn.lower().strip()
-    
     
     if sælger_navn_clean in df["Salesperson"].unique():
         st.write(f"Data fundet for {sælger_navn_clean}")
         df = df[df["Salesperson"] == sælger_navn_clean]
+        
+        # Opret et simpelt søjlediagram over solgte varer
+        fig, ax = plt.subplots()
+        df_grouped = df.groupby("Style Name")["Physical Size Quantity Delivered"].sum()
+        df_grouped.plot(kind="bar", ax=ax)
+        ax.set_title("Antal solgte enheder pr. Style Name")
+        ax.set_ylabel("Antal solgte enheder")
+        ax.set_xlabel("Style Name")
+        st.pyplot(fig)
+        
+        # Opret en oversigt over total salg
+        total_sales = df["Sales Price"].sum()
+        st.metric(label="Total Sales", value=f"{total_sales:,.2f} DKK")
+        
     else:
         st.error(f"Fejl: '{sælger_navn}' findes ikke i 'Salesperson'-kolonnen. Tjek CSV-filen.")
