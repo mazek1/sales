@@ -96,7 +96,7 @@ def load_data(uploaded_file):
     return df
 
 # Indlæs tidligere gemt data, hvis den eksisterer
-if df is not None:
+if 'df' in locals() and df is not None:
     st.write(f"Antal rækker i data: {len(df)}")
 if os.path.exists(DATA_FILE):
     df = pd.read_csv(DATA_FILE)
