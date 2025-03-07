@@ -117,7 +117,7 @@ if adgang_alle:
 if df is not None and not adgang_alle:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
     df["Salesperson"] = df["Salesperson"].replace({'\r': '', '\n': ''}, regex=True)
-        df = df.dropna(subset=["Salesperson"])
+            df = df.dropna(subset=["Salesperson"])
     sælger_navn_clean = sælger_navn.lower().strip()
     
     
