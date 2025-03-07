@@ -90,7 +90,7 @@ def load_data(uploaded_file):
     
     # Gem data til fil
     if adgang_alle and df is not None:
-        if df is not None:
+        if 'df' in locals() and df is not None:
             df.to_csv(DATA_FILE, index=False)
     
     return df
