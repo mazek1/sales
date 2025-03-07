@@ -96,7 +96,8 @@ def load_data(uploaded_file):
     return df
 
 # Indlæs tidligere gemt data, hvis den eksisterer
-st.write(f"Antal rækker i data: {len(df) if df is not None else 0}")
+if df is not None:
+    st.write(f"Antal rækker i data: {len(df)}")
 if os.path.exists(DATA_FILE):
     df = pd.read_csv(DATA_FILE)
     if "Invoice Date" in df.columns:
