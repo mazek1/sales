@@ -89,11 +89,13 @@ def load_data(uploaded_file):
         df["Discount %"] = df["Discount %"].fillna(0).round(2)
     
     # Gem data til fil
+    if adgang_alle:
     df.to_csv(DATA_FILE, index=False)
     
     return df
 
 # Indlæs tidligere gemt data, hvis den eksisterer
+st.write(f"Antal rækker i data: {len(df) if df is not None else 0}")
 if os.path.exists(DATA_FILE):
     df = pd.read_csv(DATA_FILE)
     if "Invoice Date" in df.columns:
@@ -106,6 +108,7 @@ if adgang_alle:
     uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
     if uploaded_file:
         df = load_data(uploaded_file)
+df.to_csv(DATA_FILE, index=False)
         st.success("CSV-fil er blevet uploadet og indlæst!")
 
 # Filtrer data til sælgere
@@ -113,6 +116,7 @@ if df is not None and not adgang_alle:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
     df = df.dropna(subset=["Salesperson"])
     sælger_navn_clean = sælger_navn.lower().strip()
+    
     
     if sælger_navn_clean in df["Salesperson"].unique():
         df = df[df["Salesperson"] == sælger_navn_clean]
