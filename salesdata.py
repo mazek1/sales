@@ -37,7 +37,8 @@ if os.path.exists(DATA_FILE):
         df = pd.read_csv(DATA_FILE, sep=';', encoding='utf-8', low_memory=False, on_bad_lines='warn')
     except pd.errors.ParserError:
         df = pd.read_csv(DATA_FILE, sep=',', encoding='utf-8', low_memory=False, on_bad_lines='warn')
-    if "Invoice Date" in df.columns:
+    if "Invoice Date" in df.columns and not pd.api.types.is_datetime64_any_dtype(df["Invoice Date"]):
+        df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
         df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
 else:
     df = None
@@ -78,7 +79,7 @@ if df is not None:
         df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
     if "Invoice Date" in df.columns:
         df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
-    if "Invoice Date" in df.columns and pd.api.types.is_datetime64_any_dtype(df["Invoice Date"]):
+    if "Invoice Date" in df.columns and pd.api.types.is_datetime64_any_dtype(df["Invoice Date"]) and not df["Invoice Date"].isna().all():
         df_sorted = df.sort_values(by="Invoice Date")
     else:
         st.error("'Invoice Date' mangler eller er ikke i korrekt format. Sørg for, at datoer er konverteret korrekt.")
