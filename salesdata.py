@@ -85,7 +85,7 @@ if df is not None:
     df_sorted = df.sort_values(by="Invoice Date")
     total_sales_over_time = df_sorted.groupby("Invoice Date")["Sales Price"].sum()
     if total_sales_over_time.empty:
-        st.warning("Ingen salgsdata tilgængelig for denne periode.")
+    st.warning("Ingen salgsdata tilgængelig for denne periode.")
     else:
     fig, ax = plt.subplots()
     total_sales_over_time.plot(kind="line", ax=ax)
