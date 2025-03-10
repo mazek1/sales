@@ -82,17 +82,19 @@ if adgang_alle:
 # Opret en graf over total salg over tid
 if df is not None:
     st.subheader("Total Sales Over Time")
-    df_sorted = df.sort_values(by="Invoice Date")
+    df["Sales Price"] = pd.to_numeric(df["Sales Price"], errors="coerce")
+df_sorted = df.sort_values(by="Invoice Date")
     total_sales_over_time = df_sorted.groupby("Invoice Date")["Sales Price"].sum()
+total_sales_over_time = total_sales_over_time.dropna()
     if total_sales_over_time.empty:
         st.warning("Ingen salgsdata tilgængelig for denne periode.")
     else:
-        fig, ax = plt.subplots()
-        total_sales_over_time.plot(kind="line", ax=ax)
-        ax.set_title("Total Sales Over Time")
-        ax.set_ylabel("Sales (DKK)")
-        ax.set_xlabel("Date")
-        st.pyplot(fig)
+            fig, ax = plt.subplots()
+    total_sales_over_time.plot(kind="line", ax=ax)
+    ax.set_title("Total Sales Over Time")
+    ax.set_ylabel("Sales (DKK)")
+    ax.set_xlabel("Date")
+    st.pyplot(fig)
 
     # Valg af specifik kunde
     selected_customer = st.selectbox("Vælg kunde", ["Alle kunder"] + sorted(df["Customer Name"].unique()))
@@ -103,12 +105,12 @@ if df is not None:
         if total_sales_customer.empty:
             st.warning(f"Ingen salg registreret for {selected_customer} i denne periode.")
         else:
-            fig, ax = plt.subplots()
-            total_sales_customer.plot(kind="line", ax=ax)
-            ax.set_title(f"Sales Over Time for {selected_customer}")
-            ax.set_ylabel("Sales (DKK)")
-            ax.set_xlabel("Date")
-            st.pyplot(fig)
+        fig, ax = plt.subplots()
+        total_sales_customer.plot(kind="line", ax=ax)
+        ax.set_title(f"Sales Over Time for {selected_customer}")
+        ax.set_ylabel("Sales (DKK)")
+        ax.set_xlabel("Date")
+        st.pyplot(fig)
 if df is not None and not adgang_alle:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
     df["Salesperson"] = df["Salesperson"].replace({'\\r': '', '\\n': ''}, regex=True)
