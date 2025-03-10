@@ -38,6 +38,7 @@ if os.path.exists(DATA_FILE):
     except pd.errors.ParserError:
         df = pd.read_csv(DATA_FILE, sep=',', encoding='utf-8', low_memory=False, on_bad_lines='warn')
     if "Invoice Date" in df.columns and not pd.api.types.is_datetime64_any_dtype(df["Invoice Date"]):
+        if "Invoice Date" in df.columns:
         df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
         df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
 else:
@@ -86,9 +87,9 @@ if df is not None:
     else:
         st.error("'Invoice Date' mangler eller er ikke i korrekt format. Sørg for, at datoer er konverteret korrekt.")
     
-    if periode_valg == "Månedlig":
+    if periode_valg == "Månedlig" and "Invoice Date" in df_sorted.columns and pd.api.types.is_datetime64_any_dtype(df_sorted["Invoice Date"]):
         df_sorted["Periode"] = df_sorted["Invoice Date"].dt.to_period("M")
-    else:
+    elif periode_valg == "Ugentlig" and "Invoice Date" in df_sorted.columns and pd.api.types.is_datetime64_any_dtype(df_sorted["Invoice Date"]):
         df_sorted["Periode"] = df_sorted["Invoice Date"].dt.to_period("W")
     
     total_sales_over_time = df_sorted.groupby("Periode")["Sales Price"].sum()
