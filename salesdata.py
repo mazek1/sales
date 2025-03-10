@@ -86,15 +86,15 @@ if df is not None:
     df_sorted = df.sort_values(by="Invoice Date")
     total_sales_over_time = df_sorted.groupby("Invoice Date")["Sales Price"].sum()
     total_sales_over_time = total_sales_over_time.dropna()
-    if total_sales_over_time.empty:
-        st.warning("Ingen salgsdata tilgængelig for denne periode.")
-    else:
-        fig, ax = plt.subplots()
-        total_sales_over_time.plot(kind="line", ax=ax)
-        ax.set_title("Total Sales Over Time")
-        ax.set_ylabel("Sales (DKK)")
-        ax.set_xlabel("Date")
-        st.pyplot(fig)
+        if total_sales_over_time.empty:
+            st.warning("Ingen salgsdata tilgængelig for denne periode.")
+        else:
+            fig, ax = plt.subplots()
+            total_sales_over_time.plot(kind="line", ax=ax)
+            ax.set_title("Total Sales Over Time")
+            ax.set_ylabel("Sales (DKK)")
+            ax.set_xlabel("Date")
+            st.pyplot(fig)
 
     # Valg af specifik kunde
     selected_customer = st.selectbox("Vælg kunde", ["Alle kunder"] + sorted(df["Customer Name"].unique()))
@@ -111,7 +111,7 @@ if df is not None:
             ax.set_ylabel("Sales (DKK)")
             ax.set_xlabel("Date")
             st.pyplot(fig)
-if df is not None and not adgang_alle:
+if df is not None:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
     df["Salesperson"] = df["Salesperson"].replace({'\\r': '', '\\n': ''}, regex=True)
     df = df.dropna(subset=["Salesperson"])
@@ -121,6 +121,7 @@ if df is not None and not adgang_alle:
         st.write(f"Data fundet for {sælger_navn_clean}")
         df = df[df["Salesperson"] == sælger_navn_clean]
         st.write("Data efter filtrering:")
+st.dataframe(df)
         st.write(df.head())
         
                 
