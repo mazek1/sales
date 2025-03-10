@@ -33,7 +33,10 @@ st.sidebar.success(f"Logget ind som: {sælger_navn}")
 
 # Indlæs tidligere gemt data, hvis den eksisterer
 if os.path.exists(DATA_FILE):
-    df = pd.read_csv(DATA_FILE, sep=None, engine='python', low_memory=False, on_bad_lines='warn')
+    try:
+        df = pd.read_csv(DATA_FILE, sep=';', encoding='utf-8', low_memory=False, on_bad_lines='warn')
+    except pd.errors.ParserError:
+        df = pd.read_csv(DATA_FILE, sep=',', encoding='utf-8', low_memory=False, on_bad_lines='warn')
     if "Invoice Date" in df.columns:
         df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
 else:
@@ -43,7 +46,10 @@ else:
 if adgang_alle:
     uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
     if uploaded_file:
-        df = pd.read_csv(uploaded_file, sep=None, engine='python', low_memory=False, on_bad_lines='warn')
+        try:
+        df = pd.read_csv(uploaded_file, sep=';', encoding='utf-8', low_memory=False, on_bad_lines='warn')
+    except pd.errors.ParserError:
+        df = pd.read_csv(uploaded_file, sep=',', encoding='utf-8', low_memory=False, on_bad_lines='warn')
         df.to_csv(DATA_FILE, index=False)
         st.success("CSV-fil er blevet uploadet og indlæst!")
 
