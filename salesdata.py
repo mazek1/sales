@@ -121,7 +121,7 @@ if df is not None:
         st.write(f"Data fundet for {sælger_navn_clean}")
         df = df[df["Salesperson"] == sælger_navn_clean]
         st.write("Data efter filtrering:")
-st.dataframe(df)
+        st.dataframe(df)
         st.write(df.head())
         
                 
