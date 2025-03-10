@@ -70,6 +70,8 @@ if df is not None:
     
     if "Sales Price" in df.columns:
         df["Sales Price"] = pd.to_numeric(df["Sales Price"], errors="coerce")
+    if "Invoice Date" in df.columns:
+        df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
     if "Invoice Date" in df.columns and pd.api.types.is_datetime64_any_dtype(df["Invoice Date"]):
         df_sorted = df.sort_values(by="Invoice Date")
     else:
