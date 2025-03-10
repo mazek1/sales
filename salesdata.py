@@ -78,6 +78,31 @@ if adgang_alle:
         st.success("CSV-fil er blevet uploadet og indlæst!")
 
 # Filtrer data for sælgeren
+
+# Opret en graf over total salg over tid
+if df is not None:
+    st.subheader("Total Sales Over Time")
+    df_sorted = df.sort_values(by="Invoice Date")
+    total_sales_over_time = df_sorted.groupby("Invoice Date")["Sales Price"].sum()
+    fig, ax = plt.subplots()
+    total_sales_over_time.plot(kind="line", ax=ax)
+    ax.set_title("Total Sales Over Time")
+    ax.set_ylabel("Sales (DKK)")
+    ax.set_xlabel("Date")
+    st.pyplot(fig)
+
+    # Valg af specifik kunde
+    selected_customer = st.selectbox("Vælg kunde", ["Alle kunder"] + sorted(df["Customer Name"].unique()))
+    
+    if selected_customer != "Alle kunder":
+        df_customer = df[df["Customer Name"] == selected_customer]
+        total_sales_customer = df_customer.groupby("Invoice Date")["Sales Price"].sum()
+        fig, ax = plt.subplots()
+        total_sales_customer.plot(kind="line", ax=ax)
+        ax.set_title(f"Sales Over Time for {selected_customer}")
+        ax.set_ylabel("Sales (DKK)")
+        ax.set_xlabel("Date")
+        st.pyplot(fig)
 if df is not None and not adgang_alle:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
     df["Salesperson"] = df["Salesperson"].replace({'\\r': '', '\\n': ''}, regex=True)
@@ -93,7 +118,7 @@ if df is not None and not adgang_alle:
                 
         # Opret en oversigt over total salg
         total_sales = df["Sales Price"].sum()
-        st.metric(label="Total Sales", value=f"{total_sales:.2f} DKK" if pd.notna(total_sales) and total_sales is not None else "0.00 DKK")
+        st.metric(label="Total Sales", value=f"{total_sales:.2f} DKK" if isinstance(total_sales, (int, float)) and not pd.isna(total_sales) else "0.00 DKK")
         
     else:
         st.warning(f"Ingen salg fundet for '{sælger_navn}'. Enten er der ingen salg registreret, eller navnet matcher ikke præcist i CSV.")
