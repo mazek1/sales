@@ -49,6 +49,7 @@ if adgang_alle:
         try:
             df = pd.read_csv(uploaded_file, sep=';', encoding='utf-8', low_memory=False, on_bad_lines='warn')
         except pd.errors.ParserError:
+            df = pd.read_csv(uploaded_file, sep=',', encoding='utf-8', low_memory=False, on_bad_lines='warn')
             df.to_csv(DATA_FILE, index=False)
             st.success("CSV-fil er blevet uploadet og indlæst!")
 
@@ -61,15 +62,18 @@ if df is not None and not adgang_alle and "Salesperson" in df.columns:
 if df is not None:
     st.write("Data efter filtrering:")
     relevant_columns = ["Customer Name", "Season", "Style No", "Style Name", "Color", "Invoice Date", "Physical Size Quantity Delivered", "Sales Price", "Sales Price Original", "Salesperson"]
-    df = df[[col for col in relevant_columns if col in df.columns]]
-    st.dataframe(df)
+df = df[[col for col in relevant_columns if col in df.columns]]
+st.dataframe(df)
     
     # Valg af periode (uge/måned)
     periode_valg = st.selectbox("Vælg periode", ["Månedlig", "Ugentlig"])
     
     if "Sales Price" in df.columns:
         df["Sales Price"] = pd.to_numeric(df["Sales Price"], errors="coerce")
+    if "Invoice Date" in df.columns and pd.api.types.is_datetime64_any_dtype(df["Invoice Date"]):
         df_sorted = df.sort_values(by="Invoice Date")
+    else:
+        st.error("'Invoice Date' mangler eller er ikke i korrekt format. Sørg for, at datoer er konverteret korrekt.")
     
     if periode_valg == "Månedlig":
         df_sorted["Periode"] = df_sorted["Invoice Date"].dt.to_period("M")
