@@ -36,8 +36,8 @@ if os.path.exists(DATA_FILE):
     df = pd.read_csv(DATA_FILE, sep=";", low_memory=False)
     if "Invoice Date" in df.columns:
         df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
-else:
-    df = None
+    else:
+        df = None
 
 # Kun admins kan uploade CSV-filer
 if adgang_alle:
