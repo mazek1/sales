@@ -65,7 +65,8 @@ if df is not None:
 df = df[[col for col in relevant_columns if col in df.columns]]
 st.dataframe(df)
     
-    # Valg af periode (uge/måned) periode_valg = st.selectbox("Vælg periode", ["Månedlig", "Ugentlig"])
+    # Valg af periode (uge/måned)
+    st.selectbox("Vælg periode", ["Månedlig", "Ugentlig"])
     
     if "Sales Price" in df.columns:
         df["Sales Price"] = pd.to_numeric(df["Sales Price"], errors="coerce")
