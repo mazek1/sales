@@ -47,7 +47,6 @@ if adgang_alle:
     uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
     if uploaded_file:
         try:
-        try:
             df = pd.read_csv(uploaded_file, sep=';', encoding='utf-8', low_memory=False, on_bad_lines='warn')
         except pd.errors.ParserError:
             df = pd.read_csv(uploaded_file, sep=',', encoding='utf-8', low_memory=False, on_bad_lines='warn')
