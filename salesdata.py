@@ -84,6 +84,9 @@ if df is not None:
     st.subheader("Total Sales Over Time")
     df_sorted = df.sort_values(by="Invoice Date")
     total_sales_over_time = df_sorted.groupby("Invoice Date")["Sales Price"].sum()
+    if total_sales_over_time.empty:
+        st.warning("Ingen salgsdata tilgængelig for denne periode.")
+    else:
     fig, ax = plt.subplots()
     total_sales_over_time.plot(kind="line", ax=ax)
     ax.set_title("Total Sales Over Time")
@@ -97,6 +100,9 @@ if df is not None:
     if selected_customer != "Alle kunder":
         df_customer = df[df["Customer Name"] == selected_customer]
         total_sales_customer = df_customer.groupby("Invoice Date")["Sales Price"].sum()
+        if total_sales_customer.empty:
+            st.warning(f"Ingen salg registreret for {selected_customer} i denne periode.")
+        else:
         fig, ax = plt.subplots()
         total_sales_customer.plot(kind="line", ax=ax)
         ax.set_title(f"Sales Over Time for {selected_customer}")
