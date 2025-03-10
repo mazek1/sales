@@ -54,13 +54,17 @@ if adgang_alle:
             st.success("CSV-fil er blevet uploadet og indlæst!")
 
 # Filtrer data for sælgeren
-if df is not None and not adgang_alle and "Salesperson" in df.columns:
+if df is not None and "Salesperson" in df.columns:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
     sælger_navn_clean = sælger_navn.lower().strip()
     df = df[df["Salesperson"] == sælger_navn_clean]
     
 if df is not None:
     st.write("Data efter filtrering:")
+    if "Customer Name" in df.columns:
+        selected_customer = st.selectbox("Vælg kunde", ["Alle kunder"] + sorted(df["Customer Name"].dropna().unique()))
+        if selected_customer != "Alle kunder":
+            df = df[df["Customer Name"] == selected_customer]
     relevant_columns = ["Customer Name", "Season", "Style No", "Style Name", "Color", "Invoice Date", "Physical Size Quantity Delivered", "Sales Price", "Sales Price Original", "Salesperson"]
     df = df[[col for col in relevant_columns if col in df.columns]]
     st.dataframe(df)
