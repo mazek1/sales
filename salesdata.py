@@ -103,7 +103,7 @@ if df is not None:
         if total_sales_customer.empty:
             st.warning(f"Ingen salg registreret for {selected_customer} i denne periode.")
         else:
-        fig, ax = plt.subplots()
+            fig, ax = plt.subplots()
         total_sales_customer.plot(kind="line", ax=ax)
         ax.set_title(f"Sales Over Time for {selected_customer}")
         ax.set_ylabel("Sales (DKK)")
