@@ -62,11 +62,11 @@ if df is not None and not adgang_alle and "Salesperson" in df.columns:
 if df is not None:
     st.write("Data efter filtrering:")
     relevant_columns = ["Customer Name", "Season", "Style No", "Style Name", "Color", "Invoice Date", "Physical Size Quantity Delivered", "Sales Price", "Sales Price Original", "Salesperson"]
-df = df[[col for col in relevant_columns if col in df.columns]]
-st.dataframe(df)
+    df = df[[col for col in relevant_columns if col in df.columns]]
+    st.dataframe(df)
     
     # Valg af periode (uge/måned)
-        st.selectbox("Vælg periode", ["Månedlig", "Ugentlig"])
+    periode_valg = st.selectbox("Vælg periode", ["Månedlig", "Ugentlig"])
     
     if "Sales Price" in df.columns:
         df["Sales Price"] = pd.to_numeric(df["Sales Price"], errors="coerce")
