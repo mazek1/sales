@@ -47,14 +47,17 @@ if adgang_alle:
     uploaded_file = st.file_uploader("Upload CSV-fil med salgsdata", type=["csv"])
     if uploaded_file:
         try:
+        try:
             df = pd.read_csv(uploaded_file, sep=';', encoding='utf-8', low_memory=False, on_bad_lines='warn')
         except pd.errors.ParserError:
             df = pd.read_csv(uploaded_file, sep=',', encoding='utf-8', low_memory=False, on_bad_lines='warn')
-            df.to_csv(DATA_FILE, index=False)
-            st.success("CSV-fil er blevet uploadet og indlæst!")
+    except pd.errors.ParserError:
+        df = pd.read_csv(uploaded_file, sep=',', encoding='utf-8', low_memory=False, on_bad_lines='warn')
+        df.to_csv(DATA_FILE, index=False)
+        st.success("CSV-fil er blevet uploadet og indlæst!")
 
 # Filtrer data for sælgeren
-if df is not None and not adgang_alle:
+if df is not None and not adgang_alle and "Salesperson" in df.columns:
     df["Salesperson"] = df["Salesperson"].astype(str).str.lower().str.strip()
     sælger_navn_clean = sælger_navn.lower().strip()
     df = df[df["Salesperson"] == sælger_navn_clean]
