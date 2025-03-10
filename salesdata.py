@@ -79,7 +79,9 @@ if df is not None:
         df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
     if "Invoice Date" in df.columns:
         df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
-    if "Invoice Date" in df.columns and pd.api.types.is_datetime64_any_dtype(df["Invoice Date"]) and not df["Invoice Date"].isna().all():
+    if "Invoice Date" in df.columns:
+        df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
+    if "Invoice Date" in df.columns and pd.api.types.is_datetime64_any_dtype(df["Invoice Date"]):
         df_sorted = df.sort_values(by="Invoice Date")
     else:
         st.error("'Invoice Date' mangler eller er ikke i korrekt format. Sørg for, at datoer er konverteret korrekt.")
