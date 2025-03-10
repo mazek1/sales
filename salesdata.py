@@ -39,8 +39,8 @@ if os.path.exists(DATA_FILE):
         df = pd.read_csv(DATA_FILE, sep=',', encoding='utf-8', low_memory=False, on_bad_lines='warn')
     if "Invoice Date" in df.columns and not pd.api.types.is_datetime64_any_dtype(df["Invoice Date"]):
         if "Invoice Date" in df.columns:
-        df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
-        df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
+            df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
+            df["Invoice Date"] = pd.to_datetime(df["Invoice Date"], errors='coerce')
 else:
     df = None
 
