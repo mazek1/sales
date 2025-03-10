@@ -93,7 +93,7 @@ if df is not None and not adgang_alle:
                 
         # Opret en oversigt over total salg
         total_sales = df["Sales Price"].sum()
-        st.metric(label="Total Sales", value=f"{total_sales:.2f} DKK")
+        st.metric(label="Total Sales", value=f"{total_sales:.2f} DKK" if pd.notna(total_sales) and total_sales is not None else "0.00 DKK")
         
     else:
         st.warning(f"Ingen salg fundet for '{sælger_navn}'. Enten er der ingen salg registreret, eller navnet matcher ikke præcist i CSV.")
