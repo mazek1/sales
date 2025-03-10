@@ -90,11 +90,11 @@ total_sales_over_time = total_sales_over_time.dropna()
         st.warning("Ingen salgsdata tilgængelig for denne periode.")
     else:
             fig, ax = plt.subplots()
-    total_sales_over_time.plot(kind="line", ax=ax)
-    ax.set_title("Total Sales Over Time")
-    ax.set_ylabel("Sales (DKK)")
-    ax.set_xlabel("Date")
-    st.pyplot(fig)
+        total_sales_over_time.plot(kind="line", ax=ax)
+        ax.set_title("Total Sales Over Time")
+        ax.set_ylabel("Sales (DKK)")
+        ax.set_xlabel("Date")
+        st.pyplot(fig)
 
     # Valg af specifik kunde
     selected_customer = st.selectbox("Vælg kunde", ["Alle kunder"] + sorted(df["Customer Name"].unique()))
