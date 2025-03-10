@@ -83,13 +83,13 @@ if adgang_alle:
 if df is not None:
     st.subheader("Total Sales Over Time")
     df["Sales Price"] = pd.to_numeric(df["Sales Price"], errors="coerce")
-df_sorted = df.sort_values(by="Invoice Date")
+    df_sorted = df.sort_values(by="Invoice Date")
     total_sales_over_time = df_sorted.groupby("Invoice Date")["Sales Price"].sum()
-total_sales_over_time = total_sales_over_time.dropna()
+    total_sales_over_time = total_sales_over_time.dropna()
     if total_sales_over_time.empty:
         st.warning("Ingen salgsdata tilgængelig for denne periode.")
     else:
-            fig, ax = plt.subplots()
+        fig, ax = plt.subplots()
         total_sales_over_time.plot(kind="line", ax=ax)
         ax.set_title("Total Sales Over Time")
         ax.set_ylabel("Sales (DKK)")
